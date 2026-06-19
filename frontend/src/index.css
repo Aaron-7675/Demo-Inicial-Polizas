@@ -319,6 +319,8 @@ tbody tr:hover { background: var(--gray-bg); cursor: pointer; }
 
 .loading { display: flex; align-items: center; justify-content: center; padding: 60px; color: var(--gray-text); font-size: 14px; }
 
+.menu-btn { display: none; }
+
 /* ── RESPONSIVE ─────────────────────────────────────────────────────────────── */
 
 /* Tablet (hasta 1024px) */
