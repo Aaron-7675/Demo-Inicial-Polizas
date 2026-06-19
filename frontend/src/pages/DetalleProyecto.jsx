@@ -1,3 +1,4 @@
+import Topbar from '../components/Topbar.jsx';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../App.jsx';
@@ -33,12 +34,10 @@ export default function DetalleProyecto() {
 
   return (
     <>
-      <div className="topbar">
-        <span className="topbar-title">{proyecto.referencia}</span>
-        <div className="topbar-right">
-          <span className={`badge ${proyecto.estadoColor}`}>{proyecto.estado}</span>
-        </div>
-      </div>
+      <Topbar
+        title={proyecto.referencia}
+        right={<span className={`badge ${proyecto.estadoColor}`}>{proyecto.estado}</span>}
+      />
 
       <div className="page-content">
         <div className="page-header">

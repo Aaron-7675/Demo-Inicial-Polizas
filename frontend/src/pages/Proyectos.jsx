@@ -1,3 +1,4 @@
+import Topbar from './../components/Topbar.jsx';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../App.jsx';
@@ -28,14 +29,10 @@ export default function Proyectos() {
 
   return (
     <>
-      <div className="topbar">
-        <span className="topbar-title">{isExterno ? 'Mis Expedientes' : 'Proyectos'}</span>
-        <div className="topbar-right">
-          <span style={{ fontSize: 13, color: 'var(--gray-text)' }}>
-            {proyectos.length} {proyectos.length === 1 ? 'proyecto' : 'proyectos'}
-          </span>
-        </div>
-      </div>
+      <Topbar
+        title={isExterno ? 'Mis Expedientes' : 'Proyectos'}
+        right={<span style={{ fontSize: 13, color: 'var(--gray-text)' }}>{proyectos.length} {proyectos.length === 1 ? 'proyecto' : 'proyectos'}</span>}
+      />
 
       <div className="page-content">
         <div className="toolbar">

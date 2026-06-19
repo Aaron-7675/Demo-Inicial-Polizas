@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../App.jsx';
+import Topbar from '../components/Topbar.jsx';
 
-const tipoColor = { Documento: 'blue', Condicionante: 'orange', Póliza: 'green', Proyecto: 'blue', Alerta: 'red' };
+const tipoColor = { Documento: 'blue', Condicionante: 'orange', 'Póliza': 'green', Proyecto: 'blue', Alerta: 'red' };
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -23,19 +24,19 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="topbar">
-        <span className="topbar-title">
-          {isExterno ? `Portal — ${user.empresa}` : 'Dashboard'}
-        </span>
-        <div className="topbar-right">
-          <span style={{ fontSize: 13, color: 'var(--gray-text)' }}>
-            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-          </span>
-          {data?.stats?.vencimientosProximos > 0 && (
-            <span className="badge-notif">⚠️ {data.stats.vencimientosProximos} vencimiento</span>
-          )}
-        </div>
-      </div>
+      <Topbar
+        title={isExterno ? `Portal — ${user.empresa}` : 'Dashboard'}
+        right={
+          <>
+            <span style={{ fontSize: 13, color: 'var(--gray-text)' }}>
+              {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
+            {data?.stats?.vencimientosProximos > 0 && (
+              <span className="badge-notif">⚠️ {data.stats.vencimientosProximos} vencimiento</span>
+            )}
+          </>
+        }
+      />
 
       <div className="page-content">
         {isExterno && (
@@ -77,9 +78,7 @@ export default function Dashboard() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 20 }}>
           <div className="card">
-            <div className="card-header">
-              <h3>Actividad reciente</h3>
-            </div>
+            <div className="card-header"><h3>Actividad reciente</h3></div>
             <div className="activity-list">
               {(data?.actividad || []).length === 0 ? (
                 <div className="empty-state"><div className="empty-icon">📭</div>Sin actividad reciente</div>
@@ -99,9 +98,7 @@ export default function Dashboard() {
           </div>
 
           <div className="card">
-            <div className="card-header">
-              <h3>Acceso rápido</h3>
-            </div>
+            <div className="card-header"><h3>Acceso rápido</h3></div>
             <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
                 { icon: '🏗️', label: isExterno ? 'Ver mis expedientes' : 'Ver todos los proyectos', action: () => navigate('/proyectos') },
@@ -109,14 +106,7 @@ export default function Dashboard() {
                 { icon: '🔔', label: 'Vencimientos próximos', action: () => navigate('/proyectos') },
               ].map((item, i) => (
                 <button key={i} onClick={item.action}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
-                    padding: '12px 14px', background: 'var(--gray-bg)',
-                    border: '1px solid var(--gray-border)', borderRadius: 8,
-                    cursor: 'pointer', fontSize: 14, color: 'var(--blue-dark)',
-                    fontWeight: 500, textAlign: 'left',
-                    transition: 'background 0.15s',
-                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', background: 'var(--gray-bg)', border: '1px solid var(--gray-border)', borderRadius: 8, cursor: 'pointer', fontSize: 14, color: 'var(--blue-dark)', fontWeight: 500, textAlign: 'left', transition: 'background 0.15s' }}
                   onMouseEnter={e => e.currentTarget.style.background = 'var(--blue-lighter)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'var(--gray-bg)'}
                 >
@@ -124,7 +114,6 @@ export default function Dashboard() {
                   {item.label}
                 </button>
               ))}
-
               {!isExterno && (
                 <div style={{ marginTop: 8, padding: '12px 14px', background: 'var(--green-bg)', borderRadius: 8, fontSize: 13, color: 'var(--green)' }}>
                   <strong>Sistema en demo</strong><br />
