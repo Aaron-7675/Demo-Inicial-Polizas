@@ -76,7 +76,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 20 }}>
+        <div className="dashboard-grid">
           <div className="card">
             <div className="card-header"><h3>Actividad reciente</h3></div>
             <div className="activity-list">

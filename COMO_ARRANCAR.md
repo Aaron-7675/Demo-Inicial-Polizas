@@ -1,10 +1,10 @@
 # Demo — Gestión de Pólizas
 
 ## Requisitos
-
 - Node.js instalado (versión 18 o superior)
+- pnpm instalado (`npm install -g pnpm`)
 
-## Cómo arrancar
+## Cómo arrancar (desarrollo)
 
 Necesitas abrir **dos terminales**.
 
@@ -12,7 +12,7 @@ Necesitas abrir **dos terminales**.
 
 ```bash
 cd demo/backend
-npm install
+pnpm install
 node server.js
 ```
 
@@ -22,11 +22,29 @@ El backend arranca en http://localhost:3001
 
 ```bash
 cd demo/frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 La web arranca en http://localhost:3000
+
+## Cómo arrancar (modo rápido — archivos compilados)
+
+### Terminal 1 — Backend
+
+```bash
+cd demo/backend
+pnpm install
+node server.js
+```
+
+### Terminal 2 — Frontend compilado
+
+```bash
+cd demo/frontend
+pnpm run build
+pnpm dlx serve dist -p 3000
+```
 
 ## Usuarios de prueba
 

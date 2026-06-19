@@ -9,7 +9,7 @@ export default function DetalleProyecto() {
   const navigate = useNavigate();
   const [proyecto, setProyecto] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState('info');
+  const [tab, setTab] = useState('polizas');
 
   useEffect(() => {
     fetch(`/api/proyectos/${id}`, { headers: { Authorization: `Bearer ${user.token}` } })
@@ -40,65 +40,42 @@ export default function DetalleProyecto() {
       />
 
       <div className="page-content">
+
+        {/* ── CABECERA ── */}
         <div className="page-header">
-          <button className="back-btn" onClick={() => navigate('/proyectos')}>
-            ← Volver
-          </button>
+          <button className="back-btn" onClick={() => navigate('/proyectos')}>← Volver</button>
           <div className="page-title">
             <h2>{proyecto.nombre}</h2>
             <p>{proyecto.promotora} · {proyecto.ubicacion}</p>
           </div>
         </div>
 
-        <div className="card" style={{ marginBottom: 20 }}>
-          <div className="card-body">
-            <div style={{ padding: '16px 20px' }}>
-              <div className="detail-grid">
+        {/* ── DATOS DEL PROYECTO ── */}
+        <div className="card" style={{ marginBottom: 16 }}>
+          <div className="card-header"><h3>Información del proyecto</h3></div>
+          <div style={{ padding: '16px 20px' }}>
+            <div className="detail-grid">
+              <div className="detail-field"><label>Referencia</label><span style={{ fontFamily: 'monospace' }}>{proyecto.referencia}</span></div>
+              <div className="detail-field"><label>Tipo de seguro</label><span><span className="badge blue">{proyecto.tipo}</span></span></div>
+              <div className="detail-field"><label>Promotora</label><span>{proyecto.promotora}</span></div>
+              <div className="detail-field"><label>Ubicación</label><span>{proyecto.ubicacion}</span></div>
+              <div className="detail-field"><label>Superficie</label><span>{proyecto.superficie}</span></div>
+              <div className="detail-field"><label>Nº viviendas</label><span>{proyecto.viviendas}</span></div>
+              <div className="detail-field"><label>Presupuesto de ejecución</label><span style={{ fontWeight: 600 }}>{proyecto.presupuesto}</span></div>
+              <div className="detail-field"><label>Fecha prevista finalización</label><span>{new Date(proyecto.fechaPrevista).toLocaleDateString('es-ES')}</span></div>
+            </div>
+            {proyecto.descripcion && (
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--gray-border)' }}>
                 <div className="detail-field">
-                  <label>Referencia</label>
-                  <span style={{ fontFamily: 'monospace' }}>{proyecto.referencia}</span>
-                </div>
-                <div className="detail-field">
-                  <label>Tipo de seguro</label>
-                  <span><span className="badge blue">{proyecto.tipo}</span></span>
-                </div>
-                <div className="detail-field">
-                  <label>Promotora</label>
-                  <span>{proyecto.promotora}</span>
-                </div>
-                <div className="detail-field">
-                  <label>Ubicación</label>
-                  <span>{proyecto.ubicacion}</span>
-                </div>
-                <div className="detail-field">
-                  <label>Superficie</label>
-                  <span>{proyecto.superficie}</span>
-                </div>
-                <div className="detail-field">
-                  <label>Nº viviendas</label>
-                  <span>{proyecto.viviendas}</span>
-                </div>
-                <div className="detail-field">
-                  <label>Presupuesto de ejecución</label>
-                  <span style={{ fontWeight: 600 }}>{proyecto.presupuesto}</span>
-                </div>
-                <div className="detail-field">
-                  <label>Fecha prevista finalización</label>
-                  <span>{new Date(proyecto.fechaPrevista).toLocaleDateString('es-ES')}</span>
+                  <label>Descripción</label>
+                  <span style={{ display: 'block', marginTop: 4 }}>{proyecto.descripcion}</span>
                 </div>
               </div>
-              {proyecto.descripcion && (
-                <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--gray-border)' }}>
-                  <div className="detail-field">
-                    <label>Descripción</label>
-                    <span style={{ display: 'block', marginTop: 4 }}>{proyecto.descripcion}</span>
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
+        {/* ── TABS ── */}
         <div className="card">
           <div className="tabs">
             {[
@@ -113,129 +90,84 @@ export default function DetalleProyecto() {
           </div>
 
           <div className="tab-content">
-            {/* PÓLIZAS */}
+
+            {/* ── PÓLIZAS ── */}
             {tab === 'polizas' && (
-              proyecto.polizas?.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon">📄</div>
-                  No hay pólizas emitidas para este proyecto
-                </div>
-              ) : (
-                <div className="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Número</th>
-                        <th>Tipo</th>
-                        <th>Compañía</th>
-                        <th>Tomador</th>
-                        <th>Estado</th>
-                        <th>Prima</th>
-                        <th>Emisión</th>
-                        <th>Vencimiento</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {proyecto.polizas?.map(pol => (
-                        <tr key={pol.id}>
-                          <td className="td-ref">{pol.numero}</td>
-                          <td><span className="badge blue">{pol.tipo}</span></td>
-                          <td>{pol.compania}</td>
-                          <td style={{ fontSize: 13, color: 'var(--gray-text)' }}>{pol.tomador}</td>
-                          <td><span className={`badge ${pol.estadoColor}`}>{pol.estado}</span></td>
-                          <td style={{ fontWeight: 600 }}>{pol.prima}</td>
-                          <td style={{ fontSize: 13 }}>{new Date(pol.fechaEmision).toLocaleDateString('es-ES')}</td>
-                          <td style={{ fontSize: 13, color: pol.estadoColor === 'red' ? 'var(--red)' : 'inherit' }}>
-                            {new Date(pol.fechaVencimiento).toLocaleDateString('es-ES')}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )
+              proyecto.polizas?.length === 0
+                ? <div className="empty-state"><div className="empty-icon">📄</div>No hay pólizas emitidas</div>
+                : <div className="item-cards">
+                    {proyecto.polizas?.map(pol => (
+                      <div key={pol.id} className="item-card">
+                        <div className="item-card-row">
+                          <span className="td-ref">{pol.numero}</span>
+                          <span className={`badge ${pol.estadoColor}`}>{pol.estado}</span>
+                        </div>
+                        <div className="item-card-title">{pol.tipo}</div>
+                        <div className="item-card-meta">
+                          <span>🏢 {pol.compania}</span>
+                          <span style={{ fontWeight: 700, color: 'var(--blue-dark)', fontSize: 15 }}>💶 {pol.prima}</span>
+                        </div>
+                        <div className="item-card-dates">
+                          <span>Emisión: {new Date(pol.fechaEmision).toLocaleDateString('es-ES')}</span>
+                          <span style={{ color: pol.estadoColor === 'red' ? 'var(--red)' : 'var(--gray-text)' }}>
+                            Vence: {new Date(pol.fechaVencimiento).toLocaleDateString('es-ES')}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
             )}
 
-            {/* CONDICIONANTES */}
+            {/* ── CONDICIONANTES ── */}
             {tab === 'condicionantes' && (
-              proyecto.condicionantes?.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon">✅</div>
-                  No hay condicionantes para este proyecto
-                </div>
-              ) : (
-                <div className="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Condicionante</th>
-                        <th>Estado</th>
-                        <th>Fecha límite</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {proyecto.condicionantes?.map(c => (
-                        <tr key={c.id}>
-                          <td>{c.descripcion}</td>
-                          <td>
-                            <span className={`badge ${c.estado === 'Entregado' ? 'green' : 'orange'}`}>
-                              {c.estado === 'Entregado' ? '✓ ' : '⏳ '}{c.estado}
-                            </span>
-                          </td>
-                          <td style={{ fontSize: 13, color: c.estado === 'Pendiente' ? 'var(--orange)' : 'var(--gray-text)' }}>
-                            {new Date(c.fechaLimite).toLocaleDateString('es-ES')}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )
+              proyecto.condicionantes?.length === 0
+                ? <div className="empty-state"><div className="empty-icon">✅</div>No hay condicionantes</div>
+                : <div className="item-cards">
+                    {proyecto.condicionantes?.map(c => (
+                      <div key={c.id} className={`item-card cond-card ${c.estado === 'Pendiente' ? 'cond-pending' : 'cond-done'}`}>
+                        <div className="item-card-row">
+                          <span className={`badge ${c.estado === 'Entregado' ? 'green' : 'orange'}`}>
+                            {c.estado === 'Entregado' ? '✓ Entregado' : '⏳ Pendiente'}
+                          </span>
+                          <span style={{ fontSize: 12, color: c.estado === 'Pendiente' ? 'var(--orange)' : 'var(--gray-text)' }}>
+                            📅 {new Date(c.fechaLimite).toLocaleDateString('es-ES')}
+                          </span>
+                        </div>
+                        <div className="item-card-title" style={{ fontSize: 14, fontWeight: 500 }}>{c.descripcion}</div>
+                      </div>
+                    ))}
+                  </div>
             )}
 
-            {/* DOCUMENTOS */}
+            {/* ── DOCUMENTOS ── */}
             {tab === 'documentos' && (
-              proyecto.documentos?.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon">📁</div>
-                  No hay documentos adjuntos
-                </div>
-              ) : (
-                <div className="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Nombre</th>
-                        <th>Tipo</th>
-                        <th>Fecha</th>
-                        <th>Tamaño</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {proyecto.documentos?.map(doc => (
-                        <tr key={doc.id}>
-                          <td>
-                            <span style={{ marginRight: 8 }}>
+              proyecto.documentos?.length === 0
+                ? <div className="empty-state"><div className="empty-icon">📁</div>No hay documentos adjuntos</div>
+                : <div className="item-cards">
+                    {proyecto.documentos?.map(doc => (
+                      <div key={doc.id} className="item-card doc-card">
+                        <div className="item-card-row">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 24 }}>
                               {doc.tipo === 'PDF' ? '📕' : doc.tipo === 'Excel' ? '📗' : '📄'}
                             </span>
-                            {doc.nombre}
-                          </td>
-                          <td><span className={`badge ${doc.tipo === 'PDF' ? 'red' : doc.tipo === 'Excel' ? 'green' : 'blue'}`}>{doc.tipo}</span></td>
-                          <td style={{ fontSize: 13, color: 'var(--gray-text)' }}>{new Date(doc.fecha).toLocaleDateString('es-ES')}</td>
-                          <td style={{ fontSize: 13, color: 'var(--gray-text)' }}>{doc.tamano}</td>
-                          <td>
-                            <button style={{ background: 'none', border: '1px solid var(--gray-border)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12, color: 'var(--blue-med)' }}>
-                              ↓ Descargar
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )
+                            <span className="item-card-title" style={{ fontSize: 14, margin: 0 }}>{doc.nombre}</span>
+                          </div>
+                          <span className={`badge ${doc.tipo === 'PDF' ? 'red' : doc.tipo === 'Excel' ? 'green' : 'blue'}`}>{doc.tipo}</span>
+                        </div>
+                        <div className="item-card-meta">
+                          <span style={{ color: 'var(--gray-text)', fontSize: 12 }}>
+                            {new Date(doc.fecha).toLocaleDateString('es-ES')} · {doc.tamano}
+                          </span>
+                          <button style={{ background: 'none', border: '1px solid var(--gray-border)', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontSize: 13, color: 'var(--blue-med)', fontWeight: 500 }}>
+                            ↓ Descargar
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
             )}
+
           </div>
         </div>
       </div>
