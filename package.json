@@ -1,8 +1,13 @@
 {
-  "name": "polizas-demo",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "pnpm --dir backend install && pnpm --dir frontend install && pnpm --dir frontend run build && cp -r frontend/dist/. backend/public/",
-    "start": "node backend/server.js"
-  }
+    "name": "polizas-demo",
+    "version": "1.0.0",
+    "packageManager": "pnpm@9.0.0",
+    "engines": {
+        "node": ">=18",
+        "pnpm": ">=8"
+    },
+    "scripts": {
+        "build": "pnpm --dir backend install && pnpm --dir frontend install && pnpm --dir frontend run build && mkdir -p backend/public && cp -r frontend/dist/. backend/public/",
+        "start": "node backend/server.js"
+    }
 }
