@@ -45,8 +45,9 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* ── STATS ── */}
         <div className="stats-grid">
-          <div className="stat-card">
+          <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/proyectos')}>
             <div className="stat-icon blue">🏗️</div>
             <div>
               <div className="stat-num">{data?.stats?.proyectosActivos ?? 0}</div>
@@ -77,6 +78,8 @@ export default function Dashboard() {
         </div>
 
         <div className="dashboard-grid">
+
+          {/* ── ACTIVIDAD ── */}
           <div className="card">
             <div className="card-header"><h3>Actividad reciente</h3></div>
             <div className="activity-list">
@@ -97,31 +100,73 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* ── ACCESO RÁPIDO ── */}
           <div className="card">
             <div className="card-header"><h3>Acceso rápido</h3></div>
-            <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {[
-                { icon: '🏗️', label: isExterno ? 'Ver mis expedientes' : 'Ver todos los proyectos', action: () => navigate('/proyectos') },
-                { icon: '⏳', label: 'Condicionantes pendientes', action: () => navigate('/proyectos') },
-                { icon: '🔔', label: 'Vencimientos próximos', action: () => navigate('/proyectos') },
-              ].map((item, i) => (
-                <button key={i} onClick={item.action}
-                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', background: 'var(--gray-bg)', border: '1px solid var(--gray-border)', borderRadius: 8, cursor: 'pointer', fontSize: 14, color: 'var(--blue-dark)', fontWeight: 500, textAlign: 'left', transition: 'background 0.15s' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'var(--blue-lighter)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'var(--gray-bg)'}
-                >
-                  <span style={{ fontSize: 20 }}>{item.icon}</span>
-                  {item.label}
-                </button>
-              ))}
-              {!isExterno && (
-                <div style={{ marginTop: 8, padding: '12px 14px', background: 'var(--green-bg)', borderRadius: 8, fontSize: 13, color: 'var(--green)' }}>
-                  <strong>Sistema en demo</strong><br />
-                  Los módulos Financiero, Listados y Configuración estarán disponibles en fases posteriores del proyecto.
+            <div style={{ padding: '8px 0' }}>
+
+              {/* Todos los proyectos */}
+              <div
+                onClick={() => navigate('/proyectos')}
+                className="acceso-rapido-section"
+              >
+                <div className="acceso-rapido-btn">
+                  <span>🏗️ {isExterno ? 'Mis expedientes' : 'Todos los proyectos'}</span>
+                  <span className="badge blue">{data?.stats?.proyectosActivos ?? 0}</span>
                 </div>
-              )}
+              </div>
+
+              {/* Condicionantes pendientes */}
+              <div className="acceso-rapido-section">
+                <div
+                  className="acceso-rapido-btn"
+                  onClick={() => navigate('/proyectos?conPendientes=true')}
+                >
+                  <span>⏳ Condicionantes pendientes</span>
+                  <span className="badge orange">{data?.conCondicionantes?.length ?? 0} proyectos</span>
+                </div>
+                {(data?.conCondicionantes || []).slice(0, 3).map(p => (
+                  <div key={p.id} className="acceso-rapido-item" onClick={() => navigate(`/proyectos/${p.id}`)}>
+                    <span>{p.nombre}</span>
+                    <span className="badge orange">{p.pendientes}</span>
+                  </div>
+                ))}
+                {(data?.conCondicionantes?.length ?? 0) > 3 && (
+                  <div className="acceso-rapido-more" onClick={() => navigate('/proyectos?conPendientes=true')}>
+                    Ver {data.conCondicionantes.length - 3} más →
+                  </div>
+                )}
+              </div>
+
+              {/* Vencimientos próximos */}
+              <div className="acceso-rapido-section" style={{ borderBottom: 'none' }}>
+                <div
+                  className="acceso-rapido-btn"
+                  onClick={() => navigate('/proyectos?estado=Vencimiento próximo')}
+                >
+                  <span>🔔 Vencimientos próximos</span>
+                  <span className="badge red">{data?.conVencimientos?.length ?? 0} proyectos</span>
+                </div>
+                {(data?.conVencimientos || []).map(p => (
+                  <div key={p.id} className="acceso-rapido-item" onClick={() => navigate(`/proyectos/${p.id}`)}>
+                    <span>{p.nombre}</span>
+                    <span className="badge red">{new Date(p.fechaPrevista).toLocaleDateString('es-ES')}</span>
+                  </div>
+                ))}
+                {(data?.conVencimientos || []).length === 0 && (
+                  <div style={{ padding: '8px 16px', fontSize: 13, color: 'var(--gray-text)' }}>✅ Sin vencimientos próximos</div>
+                )}
+              </div>
+
             </div>
+
+            {!isExterno && (
+              <div style={{ margin: '0 16px 16px', padding: '12px 14px', background: 'var(--green-bg)', borderRadius: 8, fontSize: 13, color: 'var(--green)' }}>
+                <strong>Sistema en demo</strong> — Módulos Financiero, Listados y Configuración disponibles en fases posteriores.
+              </div>
+            )}
           </div>
+
         </div>
       </div>
     </>

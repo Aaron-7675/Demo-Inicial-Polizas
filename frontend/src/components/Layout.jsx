@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App.jsx";
 
 export default function Layout() {
@@ -68,6 +68,13 @@ export default function Layout() {
                     {!isExterno && (
                         <>
                             <div className="sidebar-section">Gestión</div>
+                            <NavLink
+                                to="/promotoras"
+                                onClick={closeSidebar}
+                                className={({ isActive }) => (isActive ? "active" : "")}
+                            >
+                                <span className="nav-icon">🏢</span> Promotoras
+                            </NavLink>
                             <NavLink
                                 to="#"
                                 style={{ opacity: 0.4, pointerEvents: "none" }}

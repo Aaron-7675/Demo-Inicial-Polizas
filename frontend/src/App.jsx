@@ -4,6 +4,7 @@ import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Proyectos from './pages/Proyectos.jsx';
 import DetalleProyecto from './pages/DetalleProyecto.jsx';
+import Promotoras from './pages/Promotoras.jsx';
 import Layout from './components/Layout.jsx';
 
 export const AuthContext = createContext(null);
@@ -40,6 +41,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="proyectos" element={<Proyectos />} />
           <Route path="proyectos/:id" element={<DetalleProyecto />} />
+          <Route path="promotoras" element={<Promotoras />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

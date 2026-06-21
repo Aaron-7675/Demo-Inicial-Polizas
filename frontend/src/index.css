@@ -508,3 +508,40 @@ tbody tr:hover { background: var(--gray-bg); cursor: pointer; }
   .stat-num { font-size: 20px; }
   .page-content { padding: 10px; }
 }
+
+/* ── ACCESO RÁPIDO ── */
+.acceso-rapido-section {
+  border-bottom: 1px solid var(--gray-border);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+.acceso-rapido-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue-dark);
+  transition: background 0.15s;
+}
+.acceso-rapido-btn:hover { background: var(--blue-lighter); }
+.acceso-rapido-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 16px 7px 28px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.acceso-rapido-item:hover { background: var(--gray-bg); }
+.acceso-rapido-more {
+  padding: 6px 16px 10px 28px;
+  font-size: 12px;
+  color: var(--blue-med);
+  cursor: pointer;
+}
+.acceso-rapido-more:hover { text-decoration: underline; }
