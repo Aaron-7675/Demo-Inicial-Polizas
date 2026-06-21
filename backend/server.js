@@ -1232,11 +1232,34 @@ app.get('/api/promotoras/:id', authMiddleware, (req, res) => {
   res.json(p);
 });
 
+function validarPromotora({ nombre, cif, email, telefono }) {
+  const errores = {};
+  if (!nombre || nombre.trim().length < 3)
+    errores.nombre = 'El nombre debe tener al menos 3 caracteres';
+  if (!cif || !/^[A-Z]-?\d{7}[A-Z0-9]$/i.test(cif.trim()))
+    errores.cif = 'CIF inválido. Formato: B-1234567X o B1234567X';
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+    errores.email = 'El email no tiene un formato válido';
+  if (telefono) {
+    const soloDigitos = telefono.replace(/\D/g, '');
+    if (soloDigitos.length !== 9)
+      errores.telefono = 'El teléfono debe tener 9 dígitos';
+    else if (!/^[6789]/.test(soloDigitos))
+      errores.telefono = 'Debe empezar por 6, 7, 8 o 9';
+  }
+  return errores;
+}
+
 app.post('/api/promotoras', authMiddleware, (req, res) => {
   if (req.user.perfil === 'externo') return res.status(403).json({ error: 'Sin permiso' });
   const { nombre, cif, contacto, email, telefono, ciudad } = req.body;
-  if (!nombre || !cif) return res.status(400).json({ error: 'Nombre y CIF son obligatorios' });
-  const nueva = { id: nextPromotoraId++, nombre, cif, contacto: contacto || '', email: email || '', telefono: telefono || '', ciudad: ciudad || '' };
+  const errores = validarPromotora({ nombre, cif, email, telefono });
+  if (Object.keys(errores).length > 0) return res.status(400).json({ errores });
+  const cifDuplicado = promotoras.find(p => p.cif.replace('-','').toUpperCase() === cif.replace('-','').toUpperCase());
+  if (cifDuplicado) return res.status(400).json({ errores: { cif: 'Ya existe una promotora con este CIF' } });
+  const tel = telefono ? telefono.replace(/\D/g,'').slice(0,9) : '';
+  const telFmt = tel.length === 9 ? `${tel.slice(0,3)} ${tel.slice(3,6)} ${tel.slice(6)}` : tel;
+  const nueva = { id: nextPromotoraId++, nombre: nombre.trim(), cif: cif.trim().toUpperCase(), contacto: contacto?.trim() || '', email: email?.trim() || '', telefono: telFmt, ciudad: ciudad?.trim() || '' };
   promotoras.push(nueva);
   res.status(201).json(nueva);
 });
@@ -1246,8 +1269,13 @@ app.put('/api/promotoras/:id', authMiddleware, (req, res) => {
   const idx = promotoras.findIndex(p => p.id === parseInt(req.params.id));
   if (idx === -1) return res.status(404).json({ error: 'No encontrada' });
   const { nombre, cif, contacto, email, telefono, ciudad } = req.body;
-  if (!nombre || !cif) return res.status(400).json({ error: 'Nombre y CIF son obligatorios' });
-  promotoras[idx] = { ...promotoras[idx], nombre, cif, contacto: contacto || '', email: email || '', telefono: telefono || '', ciudad: ciudad || '' };
+  const errores = validarPromotora({ nombre, cif, email, telefono });
+  if (Object.keys(errores).length > 0) return res.status(400).json({ errores });
+  const cifDuplicado = promotoras.find(p => p.id !== parseInt(req.params.id) && p.cif.replace('-','').toUpperCase() === cif.replace('-','').toUpperCase());
+  if (cifDuplicado) return res.status(400).json({ errores: { cif: 'Ya existe una promotora con este CIF' } });
+  const tel2 = telefono ? telefono.replace(/\D/g,'').slice(0,9) : '';
+  const telFmt2 = tel2.length === 9 ? `${tel2.slice(0,3)} ${tel2.slice(3,6)} ${tel2.slice(6)}` : tel2;
+  promotoras[idx] = { ...promotoras[idx], nombre: nombre.trim(), cif: cif.trim().toUpperCase(), contacto: contacto?.trim() || '', email: email?.trim() || '', telefono: telFmt2, ciudad: ciudad?.trim() || '' };
   res.json(promotoras[idx]);
 });
 

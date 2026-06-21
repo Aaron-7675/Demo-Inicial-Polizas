@@ -4,21 +4,48 @@ import Topbar from '../components/Topbar.jsx';
 
 const EMPTY = { nombre: '', cif: '', contacto: '', email: '', telefono: '', ciudad: '' };
 
+// ── Validación frontend (mismas reglas que backend) ──────────────────────────
+function validar(form) {
+  const errores = {};
+  if (!form.nombre || form.nombre.trim().length < 3)
+    errores.nombre = 'Mínimo 3 caracteres';
+  if (!form.cif || !/^[A-Z]-?\d{7}[A-Z0-9]$/i.test(form.cif.trim()))
+    errores.cif = 'Formato inválido. Ejemplo: B-1234567X';
+  if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+    errores.email = 'Email no válido';
+  if (form.telefono) {
+    const soloDigitos = form.telefono.replace(/\D/g, '');
+    if (soloDigitos.length !== 9)
+      errores.telefono = 'El teléfono debe tener 9 dígitos';
+    else if (!/^[6789]/.test(soloDigitos))
+      errores.telefono = 'Debe empezar por 6, 7, 8 o 9';
+  }
+  return errores;
+}
+
+function formatTelefono(valor) {
+  const digits = valor.replace(/\D/g, '').slice(0, 9);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0,3)} ${digits.slice(3)}`;
+  return `${digits.slice(0,3)} ${digits.slice(3,6)} ${digits.slice(6)}`;
+}
+
 export default function Promotoras() {
   const { user } = useAuth();
   const [promotoras, setPromotoras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
-  const [modal, setModal] = useState(null); // null | { mode: 'new'|'edit', data }
+  const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY);
-  const [error, setError] = useState('');
+  const [errores, setErrores] = useState({});
+  const [touched, setTouched] = useState({});
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   const headers = { Authorization: `Bearer ${user.token}`, 'Content-Type': 'application/json' };
 
-  const cargar = (q = busqueda) => {
-    const params = q ? `?busqueda=${encodeURIComponent(q)}` : '';
+  const cargar = () => {
+    const params = busqueda ? `?busqueda=${encodeURIComponent(busqueda)}` : '';
     fetch(`/api/promotoras${params}`, { headers })
       .then(r => r.json())
       .then(setPromotoras)
@@ -27,21 +54,42 @@ export default function Promotoras() {
 
   useEffect(() => { cargar(); }, [busqueda]);
 
-  const abrirNueva = () => { setForm(EMPTY); setError(''); setModal({ mode: 'new' }); };
-  const abrirEditar = (p) => { setForm({ ...p }); setError(''); setModal({ mode: 'edit', id: p.id }); };
-  const cerrarModal = () => { setModal(null); setError(''); };
+  const abrirNueva = () => { setForm(EMPTY); setErrores({}); setTouched({}); setModal({ mode: 'new' }); };
+  const abrirEditar = (p) => { setForm({ ...p }); setErrores({}); setTouched({}); setModal({ mode: 'edit', id: p.id }); };
+  const cerrarModal = () => { setModal(null); setErrores({}); setTouched({}); };
+
+  const handleChange = (field, value) => {
+    const formatted = field === 'telefono' ? formatTelefono(value) : value;
+    const newForm = { ...form, [field]: formatted };
+    setForm(newForm);
+    if (touched[field]) setErrores(validar(newForm));
+  };
+
+  const handleBlur = (field) => {
+    setTouched(t => ({ ...t, [field]: true }));
+    setErrores(validar(form));
+  };
 
   const guardar = async () => {
-    if (!form.nombre.trim() || !form.cif.trim()) { setError('Nombre y CIF son obligatorios'); return; }
+    // Marcar todos como tocados y validar
+    setTouched({ nombre: true, cif: true, email: true, telefono: true });
+    const errs = validar(form);
+    setErrores(errs);
+    if (Object.keys(errs).length > 0) return;
+
     setSaving(true);
     try {
       const url = modal.mode === 'new' ? '/api/promotoras' : `/api/promotoras/${modal.id}`;
       const method = modal.mode === 'new' ? 'POST' : 'PUT';
       const res = await fetch(url, { method, headers, body: JSON.stringify(form) });
-      if (!res.ok) { const e = await res.json(); setError(e.error || 'Error al guardar'); return; }
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.errores) setErrores(data.errores);
+        return;
+      }
       cerrarModal();
-      cargar('');
       setBusqueda('');
+      cargar();
     } finally { setSaving(false); }
   };
 
@@ -63,8 +111,6 @@ export default function Promotoras() {
       />
 
       <div className="page-content">
-
-        {/* Buscador */}
         <div className="search-bar-row" style={{ marginBottom: 16 }}>
           <input
             className="search-input"
@@ -77,45 +123,39 @@ export default function Promotoras() {
           </span>
         </div>
 
-        {/* Tabla escritorio */}
         {loading ? <div className="loading">Cargando...</div> : (
           <>
+            {/* Tabla escritorio */}
             <div className="card desktop-only">
-              {promotoras.length === 0 ? (
-                <div className="empty-state"><div className="empty-icon">🏢</div>No se encontraron promotoras</div>
-              ) : (
-                <div className="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Nombre</th>
-                        <th>CIF</th>
-                        <th>Contacto</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Ciudad</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {promotoras.map(p => (
-                        <tr key={p.id}>
-                          <td className="td-name">{p.nombre}</td>
-                          <td className="td-ref">{p.cif}</td>
-                          <td style={{ fontSize: 13 }}>{p.contacto || '—'}</td>
-                          <td style={{ fontSize: 13 }}>{p.email || '—'}</td>
-                          <td style={{ fontSize: 13 }}>{p.telefono || '—'}</td>
-                          <td style={{ fontSize: 13 }}>{p.ciudad || '—'}</td>
-                          <td style={{ whiteSpace: 'nowrap' }}>
-                            <button onClick={() => abrirEditar(p)} style={btnStyle('var(--blue-med)')}>✏️ Editar</button>
-                            <button onClick={() => setConfirmDelete(p)} style={{ ...btnStyle('var(--red)'), marginLeft: 6 }}>🗑️</button>
-                          </td>
+              {promotoras.length === 0
+                ? <div className="empty-state"><div className="empty-icon">🏢</div>No se encontraron promotoras</div>
+                : <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Nombre</th><th>CIF</th><th>Contacto</th>
+                          <th>Email</th><th>Teléfono</th><th>Ciudad</th><th></th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                      </thead>
+                      <tbody>
+                        {promotoras.map(p => (
+                          <tr key={p.id}>
+                            <td className="td-name">{p.nombre}</td>
+                            <td className="td-ref">{p.cif}</td>
+                            <td style={{ fontSize: 13 }}>{p.contacto || '—'}</td>
+                            <td style={{ fontSize: 13 }}>{p.email || '—'}</td>
+                            <td style={{ fontSize: 13 }}>{p.telefono || '—'}</td>
+                            <td style={{ fontSize: 13 }}>{p.ciudad || '—'}</td>
+                            <td style={{ whiteSpace: 'nowrap' }}>
+                              <button onClick={() => abrirEditar(p)} style={btnSt('var(--blue-med)')}>✏️ Editar</button>
+                              <button onClick={() => setConfirmDelete(p)} style={{ ...btnSt('var(--red)'), marginLeft: 6 }}>🗑️</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+              }
             </div>
 
             {/* Tarjetas móvil */}
@@ -127,12 +167,12 @@ export default function Promotoras() {
                     <span className="td-ref">{p.cif}</span>
                   </div>
                   {p.contacto && <div style={{ fontSize: 13, color: 'var(--gray-text)' }}>👤 {p.contacto}</div>}
-                  {p.email && <div style={{ fontSize: 13, color: 'var(--gray-text)' }}>✉️ {p.email}</div>}
+                  {p.email    && <div style={{ fontSize: 13, color: 'var(--gray-text)' }}>✉️ {p.email}</div>}
                   {p.telefono && <div style={{ fontSize: 13, color: 'var(--gray-text)' }}>📞 {p.telefono}</div>}
-                  {p.ciudad && <div style={{ fontSize: 13, color: 'var(--gray-text)' }}>📍 {p.ciudad}</div>}
+                  {p.ciudad   && <div style={{ fontSize: 13, color: 'var(--gray-text)' }}>📍 {p.ciudad}</div>}
                   <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                    <button onClick={() => abrirEditar(p)} style={btnStyle('var(--blue-med)')}>✏️ Editar</button>
-                    <button onClick={() => setConfirmDelete(p)} style={btnStyle('var(--red)')}>🗑️ Eliminar</button>
+                    <button onClick={() => abrirEditar(p)} style={btnSt('var(--blue-med)')}>✏️ Editar</button>
+                    <button onClick={() => setConfirmDelete(p)} style={btnSt('var(--red)')}>🗑️ Eliminar</button>
                   </div>
                 </div>
               ))}
@@ -154,18 +194,28 @@ export default function Promotoras() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
               <div style={{ gridColumn: '1 / -1' }}>
-                <Field label="Nombre *" value={form.nombre} onChange={v => setForm(f => ({ ...f, nombre: v }))} placeholder="Razón social completa" />
+                <Field label="Nombre *" value={form.nombre} error={touched.nombre && errores.nombre}
+                  onChange={v => handleChange('nombre', v)} onBlur={() => handleBlur('nombre')}
+                  placeholder="Razón social completa" />
               </div>
-              <Field label="CIF *" value={form.cif} onChange={v => setForm(f => ({ ...f, cif: v }))} placeholder="B-12345678" />
-              <Field label="Ciudad" value={form.ciudad} onChange={v => setForm(f => ({ ...f, ciudad: v }))} placeholder="Madrid" />
-              <Field label="Persona de contacto" value={form.contacto} onChange={v => setForm(f => ({ ...f, contacto: v }))} placeholder="Nombre apellidos" />
-              <Field label="Teléfono" value={form.telefono} onChange={v => setForm(f => ({ ...f, telefono: v }))} placeholder="91 234 56 78" />
+              <Field label="CIF *" value={form.cif} error={touched.cif && errores.cif}
+                onChange={v => handleChange('cif', v)} onBlur={() => handleBlur('cif')}
+                placeholder="B-1234567X" />
+              <Field label="Ciudad" value={form.ciudad}
+                onChange={v => handleChange('ciudad', v)}
+                placeholder="Madrid" />
+              <Field label="Persona de contacto" value={form.contacto}
+                onChange={v => handleChange('contacto', v)}
+                placeholder="Nombre y apellidos" />
+              <Field label="Teléfono" value={form.telefono} error={touched.telefono && errores.telefono}
+                onChange={v => handleChange('telefono', v)} onBlur={() => handleBlur('telefono')}
+                placeholder="91 234 56 78" />
               <div style={{ gridColumn: '1 / -1' }}>
-                <Field label="Email" value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} placeholder="contacto@empresa.es" type="email" />
+                <Field label="Email" value={form.email} error={touched.email && errores.email}
+                  onChange={v => handleChange('email', v)} onBlur={() => handleBlur('email')}
+                  placeholder="contacto@empresa.es" type="email" />
               </div>
             </div>
-
-            {error && <div style={{ marginTop: 12, color: 'var(--red)', fontSize: 13 }}>⚠️ {error}</div>}
 
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 20 }}>
               <button onClick={cerrarModal} style={{ padding: '9px 18px', border: '1px solid var(--gray-border)', borderRadius: 8, background: '#fff', cursor: 'pointer', fontSize: 14 }}>
@@ -202,34 +252,32 @@ export default function Promotoras() {
   );
 }
 
-function Field({ label, value, onChange, placeholder, type = 'text' }) {
+function Field({ label, value, onChange, onBlur, error, placeholder, type = 'text' }) {
   return (
     <div>
-      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--gray-text)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</label>
+      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--gray-text)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+        {label}
+      </label>
       <input
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
+        onBlur={onBlur}
         placeholder={placeholder}
-        style={{ width: '100%', padding: '9px 12px', border: '1px solid var(--gray-border)', borderRadius: 8, fontSize: 14, outline: 'none', fontFamily: 'inherit' }}
-        onFocus={e => e.target.style.borderColor = 'var(--blue-med)'}
-        onBlur={e => e.target.style.borderColor = 'var(--gray-border)'}
+        style={{
+          width: '100%', padding: '9px 12px', fontSize: 14, fontFamily: 'inherit',
+          border: `1px solid ${error ? 'var(--red)' : 'var(--gray-border)'}`,
+          borderRadius: 8, outline: 'none',
+          background: error ? 'var(--red-bg)' : '#fff',
+        }}
+        onFocus={e => { if (!error) e.target.style.borderColor = 'var(--blue-med)'; }}
+        onBlurCapture={e => { if (!error) e.target.style.borderColor = 'var(--gray-border)'; }}
       />
+      {error && <div style={{ fontSize: 12, color: 'var(--red)', marginTop: 4 }}>⚠️ {error}</div>}
     </div>
   );
 }
 
-const overlayStyle = {
-  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  zIndex: 999, padding: 16,
-};
-const modalStyle = {
-  background: '#fff', borderRadius: 12, padding: 28,
-  width: '100%', maxWidth: 560,
-  boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-};
-const btnStyle = (color) => ({
-  padding: '6px 12px', background: 'none', border: `1px solid ${color}`,
-  borderRadius: 6, cursor: 'pointer', fontSize: 12, color,
-});
+const overlayStyle = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999, padding: 16 };
+const modalStyle = { background: '#fff', borderRadius: 12, padding: 28, width: '100%', maxWidth: 560, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' };
+const btnSt = (color) => ({ padding: '6px 12px', background: 'none', border: `1px solid ${color}`, borderRadius: 6, cursor: 'pointer', fontSize: 12, color });
