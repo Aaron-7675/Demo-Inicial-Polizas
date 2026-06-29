@@ -39,7 +39,7 @@ const usuarios = [
     },
 ];
 
-const proyectos = [
+const proyectosBase = [
     {
         id: 1,
         referencia: "PROY-2024-001",
@@ -979,6 +979,55 @@ const proyectos = [
     },
 ];
 
+// ── PROYECTOS HISTÓRICOS ADICIONALES ─────────────────────────────────────────
+const comerciales = ['MF', 'GC', 'YM', 'AL', 'RC'];
+
+function proy(id, ref, nombre, promotora, ubi, estado, estadoColor, tipo, ramo, inicio, prevista, sup, viv, ppto, comercial, primaNeta, polizas, condicionantes, documentos) {
+  return { id, referencia: ref, nombre, promotora, ubicacion: ubi, estado, estadoColor, tipo, ramo, fechaInicio: inicio, fechaPrevista: prevista, superficie: sup, viviendas: viv, presupuesto: ppto, comercial, primaNeta, descripcion: '', polizas, condicionantes, documentos };
+}
+
+function pol(id, numero, tipo, compania, estado, estadoColor, emision, vencimiento, prima, tomador) {
+  return { id, numero, tipo, compania, estado, estadoColor, fechaEmision: emision, fechaVencimiento: vencimiento, prima, tomador };
+}
+
+const proyectosHistoricos = [
+  proy(15,'PROY-2018-015','Residencial Alameda','Promotora Iberia S.L.','Madrid - Carabanchel','Poliza emitida','green','SDD','SDD','2018-01-10','2020-06-30','3.200 m²',32,'2.800.000 €','MF',22400,[pol(1501,'SDD-2018-00101','SDD - Decenal','Mapfre','Vigente','green','2018-03-01','2028-03-01','22.400 €','Promotora Iberia S.L.')],[{id:101,descripcion:'Certificado fin obra',estado:'Entregado',fechaLimite:'2020-06-01'}],[{id:101,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2018-03-01',tamano:'1.1 MB'}]),
+  proy(16,'PROY-2018-016','Edificio Central Park','Construcciones García S.L.','Barcelona - Gracia','Poliza emitida','green','SDD','SDD','2018-03-15','2020-09-30','4.100 m²',40,'3.500.000 €','GC',28000,[pol(1601,'SDD-2018-00156','SDD - Decenal','AXA Seguros','Vigente','green','2018-05-10','2028-05-10','28.000 €','Construcciones García S.L.')],[{id:102,descripcion:'Acta recepción',estado:'Entregado',fechaLimite:'2020-09-01'}],[{id:102,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2018-05-10',tamano:'1.2 MB'}]),
+  proy(17,'PROY-2018-017','Urbanización Los Pinos','Costa Levante Inmuebles S.A.','Valencia - Benimaclet','Poliza emitida','green','AFCA','AFCA','2018-06-01','2020-12-31','2.800 m²',28,'2.100.000 €','YM',9800,[pol(1701,'AFCA-2018-00201','AFCA - Cantidades Anticipadas','Allianz','Vigente','green','2018-07-15','2020-12-31','9.800 €','Costa Levante Inmuebles S.A.')],[{id:103,descripcion:'Licencia obras',estado:'Entregado',fechaLimite:'2018-08-01'}],[{id:103,nombre:'Póliza AFCA.pdf',tipo:'PDF',fecha:'2018-07-15',tamano:'950 KB'}]),
+  proy(18,'PROY-2019-018','Complejo Las Fuentes','Bilbao Desarrollos S.L.','Bilbao - Deusto','Poliza emitida','green','SDD','SDD','2019-02-01','2021-08-31','5.600 m²',56,'4.800.000 €','AL',38400,[pol(1801,'SDD-2019-00089','SDD - Decenal','Zurich','Vigente','green','2019-04-01','2029-04-01','38.400 €','Bilbao Desarrollos S.L.')],[{id:104,descripcion:'Certificado estructura',estado:'Entregado',fechaLimite:'2021-06-01'}],[{id:104,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2019-04-01',tamano:'1.3 MB'}]),
+  proy(19,'PROY-2019-019','Viviendas Mediterráneo','Mediterráneo Homes S.L.','Alicante - San Juan','Poliza emitida','green','SDD + AFCA','SDD','2019-04-15','2021-10-31','6.200 m²',60,'5.200.000 €','RC',43200,[pol(1901,'SDD-2019-00134','SDD - Decenal','Generali','Vigente','green','2019-06-01','2029-06-01','33.600 €','Mediterráneo Homes S.L.'),pol(1902,'AFCA-2019-00098','AFCA - Cantidades Anticipadas','Generali','Vigente','green','2019-06-01','2021-10-31','9.600 €','Mediterráneo Homes S.L.')],[{id:105,descripcion:'Informe geotécnico',estado:'Entregado',fechaLimite:'2019-07-01'}],[{id:105,nombre:'Pólizas.pdf',tipo:'PDF',fecha:'2019-06-01',tamano:'1.8 MB'}]),
+  proy(20,'PROY-2019-020','Torres del Norte','Sierra Desarrollos S.A.','Santander - Centro','Poliza emitida','green','SDD','SDD','2019-07-01','2022-01-31','3.800 m²',38,'3.200.000 €','MF',25600,[pol(2001,'SDD-2019-00267','SDD - Decenal','Mapfre','Vigente','green','2019-09-01','2029-09-01','25.600 €','Sierra Desarrollos S.A.')],[{id:106,descripcion:'Acta final obra',estado:'Entregado',fechaLimite:'2022-01-15'}],[{id:106,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2019-09-01',tamano:'1.1 MB'}]),
+  proy(21,'PROY-2019-021','Residencial Olimpo','Aragón Inmobiliaria S.L.','Zaragoza - Romareda','Poliza emitida','green','AFCA','AFCA','2019-09-15','2022-03-31','2.400 m²',24,'1.900.000 €','GC',8400,[pol(2101,'AFCA-2019-00312','AFCA - Cantidades Anticipadas','AXA Seguros','Vigente','green','2019-11-01','2022-03-31','8.400 €','Aragón Inmobiliaria S.L.')],[{id:107,descripcion:'Cédulas habitabilidad',estado:'Entregado',fechaLimite:'2022-03-01'}],[{id:107,nombre:'Póliza AFCA.pdf',tipo:'PDF',fecha:'2019-11-01',tamano:'880 KB'}]),
+  proy(22,'PROY-2020-022','Parque Residencial Sur','Renovación Urbana S.L.','Sevilla - Triana','Poliza emitida','green','SDD','SDD','2020-01-10','2022-07-31','4.500 m²',44,'3.800.000 €','YM',30400,[pol(2201,'SDD-2020-00045','SDD - Decenal','Allianz','Vigente','green','2020-03-01','2030-03-01','30.400 €','Renovación Urbana S.L.')],[{id:108,descripcion:'Informe final estructura',estado:'Entregado',fechaLimite:'2022-07-01'}],[{id:108,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2020-03-01',tamano:'1.2 MB'}]),
+  proy(23,'PROY-2020-023','Edificio Río Grande','Andalucía Desarrollos S.A.','Córdoba - Centro','Poliza emitida','green','SDD + AFCA','SDD','2020-03-15','2022-09-30','3.100 m²',30,'2.600.000 €','AL',22400,[pol(2301,'SDD-2020-00112','SDD - Decenal','Zurich','Vigente','green','2020-05-15','2030-05-15','18.200 €','Andalucía Desarrollos S.A.'),pol(2302,'AFCA-2020-00089','AFCA - Cantidades Anticipadas','Zurich','Vigente','green','2020-05-15','2022-09-30','4.200 €','Andalucía Desarrollos S.A.')],[{id:109,descripcion:'Escrituras división horizontal',estado:'Entregado',fechaLimite:'2022-09-01'}],[{id:109,nombre:'Pólizas.pdf',tipo:'PDF',fecha:'2020-05-15',tamano:'1.5 MB'}]),
+  proy(24,'PROY-2020-024','Villas del Mar','Costa Levante Inmuebles S.A.','Málaga - Marbella','Poliza emitida','green','SDD','SDD','2020-06-01','2022-12-31','7.200 m²',72,'6.400.000 €','RC',51200,[pol(2401,'SDD-2020-00198','SDD - Decenal','Mapfre','Vigente','green','2020-08-01','2030-08-01','51.200 €','Costa Levante Inmuebles S.A.')],[{id:110,descripcion:'Acta recepción final',estado:'Entregado',fechaLimite:'2022-12-01'}],[{id:110,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2020-08-01',tamano:'1.4 MB'}]),
+  proy(25,'PROY-2020-025','Residencial Pinares','Promotora Iberia S.L.','Valladolid - Parquesol','Poliza emitida','green','AFCA','AFCA','2020-09-01','2023-03-31','2.600 m²',26,'2.000.000 €','MF',8800,[pol(2501,'AFCA-2020-00267','AFCA - Cantidades Anticipadas','AXA Seguros','Vigente','green','2020-10-15','2023-03-31','8.800 €','Promotora Iberia S.L.')],[{id:111,descripcion:'Certificado fin obra',estado:'Entregado',fechaLimite:'2023-03-01'}],[{id:111,nombre:'Póliza AFCA.pdf',tipo:'PDF',fecha:'2020-10-15',tamano:'920 KB'}]),
+  proy(26,'PROY-2021-026','Complejo Deportivo','Construcciones García S.L.','Madrid - Arganzuela','Poliza emitida','green','SDD','SDD','2021-01-15','2023-06-30','5.100 m²',0,'4.200.000 €','GC',33600,[pol(2601,'SDD-2021-00034','SDD - Decenal','Generali','Vigente','green','2021-03-01','2031-03-01','33.600 €','Construcciones García S.L.')],[{id:112,descripcion:'Certificado instalaciones',estado:'Entregado',fechaLimite:'2023-06-01'}],[{id:112,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2021-03-01',tamano:'1.3 MB'}]),
+  proy(27,'PROY-2021-027','Urbanización Palmeral','Mediterráneo Homes S.L.','Murcia - La Manga','Poliza emitida','green','SDD','SDD','2021-03-01','2023-09-30','8.400 m²',84,'7.200.000 €','YM',57600,[pol(2701,'SDD-2021-00089','SDD - Decenal','AXA Seguros','Vigente','green','2021-05-01','2031-05-01','57.600 €','Mediterráneo Homes S.L.')],[{id:113,descripcion:'Acta recepción urbanización',estado:'Entregado',fechaLimite:'2023-09-01'}],[{id:113,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2021-05-01',tamano:'1.6 MB'}]),
+  proy(28,'PROY-2021-028','Edificio Milenio','Bilbao Desarrollos S.L.','San Sebastián - Parte Vieja','Poliza emitida','green','SDD + AFCA','SDD','2021-06-15','2023-12-31','3.600 m²',36,'3.100.000 €','AL',26800,[pol(2801,'SDD-2021-00156','SDD - Decenal','Mapfre','Vigente','green','2021-08-01','2031-08-01','19.200 €','Bilbao Desarrollos S.L.'),pol(2802,'AFCA-2021-00134','AFCA - Cantidades Anticipadas','Mapfre','Vigente','green','2021-08-01','2023-12-31','7.600 €','Bilbao Desarrollos S.L.')],[{id:114,descripcion:'Informe ITE',estado:'Entregado',fechaLimite:'2023-12-01'}],[{id:114,nombre:'Pólizas.pdf',tipo:'PDF',fecha:'2021-08-01',tamano:'1.4 MB'}]),
+  proy(29,'PROY-2021-029','Residencial Cumbres','Sierra Desarrollos S.A.','Granada - Zaidín','Poliza emitida','green','SDD','SDD','2021-09-01','2024-03-31','4.200 m²',42,'3.600.000 €','RC',28800,[pol(2901,'SDD-2021-00234','SDD - Decenal','Allianz','Vigente','green','2021-11-01','2031-11-01','28.800 €','Sierra Desarrollos S.A.')],[{id:115,descripcion:'Certificado director obra',estado:'Entregado',fechaLimite:'2024-03-01'}],[{id:115,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2021-11-01',tamano:'1.2 MB'}]),
+  proy(30,'PROY-2022-030','Torres Gemelas Levante','Costa Levante Inmuebles S.A.','Valencia - Benicalap','Poliza emitida','green','SDD','SDD','2022-01-10','2024-07-31','9.600 m²',96,'8.400.000 €','MF',67200,[pol(3001,'SDD-2022-00023','SDD - Decenal','Zurich','Vigente','green','2022-03-01','2032-03-01','67.200 €','Costa Levante Inmuebles S.A.')],[{id:116,descripcion:'Acta recepción obras',estado:'Entregado',fechaLimite:'2024-07-01'}],[{id:116,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2022-03-01',tamano:'1.8 MB'}]),
+  proy(31,'PROY-2022-031','Complejo Residencial Oeste','Promotora Iberia S.L.','Madrid - Latina','Poliza emitida','green','SDD + AFCA','SDD','2022-03-15','2024-09-30','5.800 m²',56,'4.900.000 €','GC',43200,[pol(3101,'SDD-2022-00067','SDD - Decenal','AXA Seguros','Vigente','green','2022-05-15','2032-05-15','32.000 €','Promotora Iberia S.L.'),pol(3102,'AFCA-2022-00145','AFCA - Cantidades Anticipadas','AXA Seguros','Vigente','green','2022-05-15','2024-09-30','11.200 €','Promotora Iberia S.L.')],[{id:117,descripcion:'Licencia primera ocupación',estado:'Entregado',fechaLimite:'2024-09-01'}],[{id:117,nombre:'Pólizas.pdf',tipo:'PDF',fecha:'2022-05-15',tamano:'1.5 MB'}]),
+  proy(32,'PROY-2022-032','Edificio Bahía','Andalucía Desarrollos S.A.','Cádiz - Centro','Poliza emitida','green','SDD','SDD','2022-06-01','2024-12-31','3.400 m²',34,'2.900.000 €','YM',23200,[pol(3201,'SDD-2022-00134','SDD - Decenal','Generali','Vigente','green','2022-08-01','2032-08-01','23.200 €','Andalucía Desarrollos S.A.')],[{id:118,descripcion:'Certificado eficiencia energética',estado:'Entregado',fechaLimite:'2024-12-01'}],[{id:118,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2022-08-01',tamano:'1.1 MB'}]),
+  proy(33,'PROY-2022-033','Vistas al Pirineo','Aragón Inmobiliaria S.L.','Huesca - Centro','Poliza emitida','green','AFCA','AFCA','2022-09-01','2025-03-31','2.200 m²',22,'1.700.000 €','AL',7400,[pol(3301,'AFCA-2022-00289','AFCA - Cantidades Anticipadas','Mapfre','Vigente','green','2022-10-15','2025-03-31','7.400 €','Aragón Inmobiliaria S.L.')],[{id:119,descripcion:'Cédulas habitabilidad',estado:'Entregado',fechaLimite:'2025-03-01'}],[{id:119,nombre:'Póliza AFCA.pdf',tipo:'PDF',fecha:'2022-10-15',tamano:'870 KB'}]),
+  proy(34,'PROY-2023-034','Residencial Buen Aire','Renovación Urbana S.L.','Burgos - Centro','Poliza emitida','green','SDD','SDD','2023-01-15','2025-07-31','3.900 m²',38,'3.300.000 €','RC',26400,[pol(3401,'SDD-2023-00012','SDD - Decenal','AXA Seguros','Vigente','green','2023-03-01','2033-03-01','26.400 €','Renovación Urbana S.L.')],[{id:120,descripcion:'Acta recepción',estado:'Entregado',fechaLimite:'2025-07-01'}],[{id:120,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2023-03-01',tamano:'1.2 MB'}]),
+  proy(35,'PROY-2023-035','Complejo El Bosque','Construcciones García S.L.','Segovia - Extrarradio','Poliza emitida','green','SDD','SDD','2023-03-01','2025-09-30','4.700 m²',46,'4.000.000 €','MF',32000,[pol(3501,'SDD-2023-00056','SDD - Decenal','Allianz','Vigente','green','2023-05-01','2033-05-01','32.000 €','Construcciones García S.L.')],[{id:121,descripcion:'Informe control calidad',estado:'Entregado',fechaLimite:'2025-09-01'}],[{id:121,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2023-05-01',tamano:'1.3 MB'}]),
+  proy(36,'PROY-2023-036','Torres del Ebro','Aragón Inmobiliaria S.L.','Zaragoza - Delicias','Poliza emitida','green','SDD + AFCA','SDD','2023-05-15','2025-11-30','6.100 m²',60,'5.300.000 €','GC',47200,[pol(3601,'SDD-2023-00134','SDD - Decenal','Zurich','Vigente','green','2023-07-01','2033-07-01','36.000 €','Aragón Inmobiliaria S.L.'),pol(3602,'AFCA-2023-00234','AFCA - Cantidades Anticipadas','Zurich','Vigente','green','2023-07-01','2025-11-30','11.200 €','Aragón Inmobiliaria S.L.')],[{id:122,descripcion:'Planos as-built',estado:'Pendiente',fechaLimite:'2025-11-01'}],[{id:122,nombre:'Pólizas.pdf',tipo:'PDF',fecha:'2023-07-01',tamano:'1.6 MB'}]),
+  proy(37,'PROY-2023-037','Residencial La Rioja','Mediterráneo Homes S.L.','Logroño - Cascajos','En trámite','orange','SDD','SDD','2023-08-01','2025-12-31','3.200 m²',32,'2.700.000 €','YM',21600,[pol(3701,'SDD-2023-00198','SDD - Decenal','Mapfre','Vigente','green','2023-10-01','2033-10-01','21.600 €','Mediterráneo Homes S.L.')],[{id:123,descripcion:'Certificado inicio obra',estado:'Entregado',fechaLimite:'2023-11-01'},{id:124,descripcion:'Informe geotécnico',estado:'Pendiente',fechaLimite:'2025-06-01'}],[{id:123,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2023-10-01',tamano:'1.1 MB'}]),
+  proy(38,'PROY-2024-038','Edificio Catedral','Renovación Urbana S.L.','León - Centro histórico','En trámite','orange','SDD','SDD','2024-02-01','2026-06-30','2.100 m²',20,'1.800.000 €','AL',14400,[pol(3801,'SDD-2024-00445','SDD - Decenal','AXA Seguros','Vigente','green','2024-04-01','2034-04-01','14.400 €','Renovación Urbana S.L.')],[{id:125,descripcion:'Autorización patrimonio',estado:'Entregado',fechaLimite:'2024-03-15'},{id:126,descripcion:'Planos restauración',estado:'Pendiente',fechaLimite:'2025-12-01'}],[{id:124,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2024-04-01',tamano:'1.0 MB'}]),
+  proy(39,'PROY-2024-039','Urbanización Costa Verde','Costa Levante Inmuebles S.A.','Castellón - Benicàssim','En trámite','orange','SDD + AFCA','SDD','2024-04-15','2026-10-31','7.800 m²',78,'6.700.000 €','RC',56000,[pol(3901,'SDD-2024-00567','SDD - Decenal','Generali','Vigente','green','2024-06-01','2034-06-01','44.800 €','Costa Levante Inmuebles S.A.'),pol(3902,'AFCA-2024-00312','AFCA - Cantidades Anticipadas','Generali','Vigente','green','2024-06-01','2026-10-31','11.200 €','Costa Levante Inmuebles S.A.')],[{id:127,descripcion:'Informe impacto ambiental',estado:'Pendiente',fechaLimite:'2025-09-01'}],[{id:125,nombre:'Pólizas.pdf',tipo:'PDF',fecha:'2024-06-01',tamano:'1.7 MB'}]),
+  proy(40,'PROY-2024-040','Complejo Retiro','Promotora Iberia S.L.','Madrid - Retiro','En trámite','orange','SDD','SDD','2024-07-01','2026-12-31','4.300 m²',42,'3.700.000 €','MF',29600,[pol(4001,'SDD-2024-00678','SDD - Decenal','Allianz','Vigente','green','2024-09-01','2034-09-01','29.600 €','Promotora Iberia S.L.')],[{id:128,descripcion:'Licencia obra mayor',estado:'Entregado',fechaLimite:'2024-08-15'},{id:129,descripcion:'Control hormigón fase 1',estado:'Pendiente',fechaLimite:'2025-10-01'}],[{id:126,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2024-09-01',tamano:'1.3 MB'}]),
+  proy(41,'PROY-2025-041','Residencial Atlántico','Andalucía Desarrollos S.A.','Huelva - Centro','En trámite','orange','SDD','SDD','2025-01-15','2027-05-31','3.600 m²',36,'3.100.000 €','GC',24800,[pol(4101,'SDD-2025-00089','SDD - Decenal','Zurich','Vigente','green','2025-03-01','2035-03-01','24.800 €','Andalucía Desarrollos S.A.')],[{id:130,descripcion:'Certificado inicio obra',estado:'Entregado',fechaLimite:'2025-04-01'},{id:131,descripcion:'Informe estructura fase 1',estado:'Pendiente',fechaLimite:'2026-01-01'}],[{id:127,nombre:'Póliza SDD.pdf',tipo:'PDF',fecha:'2025-03-01',tamano:'1.2 MB'}]),
+  proy(42,'PROY-2025-042','Torres Mediterráneo II','Mediterráneo Homes S.L.','Almería - Aguadulce','En trámite','orange','SDD + AFCA','SDD','2025-03-01','2027-09-30','5.400 m²',52,'4.600.000 €','YM',39200,[pol(4201,'SDD-2025-00145','SDD - Decenal','Mapfre','Vigente','green','2025-05-01','2035-05-01','28.800 €','Mediterráneo Homes S.L.'),pol(4202,'AFCA-2025-00089','AFCA - Cantidades Anticipadas','Mapfre','Vigente','green','2025-05-01','2027-09-30','10.400 €','Mediterráneo Homes S.L.')],[{id:132,descripcion:'Memoria calidades',estado:'Entregado',fechaLimite:'2025-06-01'},{id:133,descripcion:'Control cimentación',estado:'Pendiente',fechaLimite:'2025-12-01'}],[{id:128,nombre:'Pólizas.pdf',tipo:'PDF',fecha:'2025-05-01',tamano:'1.5 MB'}]),
+  proy(43,'PROY-2025-043','Edificio Vega','Bilbao Desarrollos S.L.','Vitoria - Lakua','En estudio','blue','SDD','SDD','2025-05-01','2028-01-31','2.800 m²',28,'2.400.000 €','AL',0,[],[{id:134,descripcion:'Consulta urbanística',estado:'Pendiente',fechaLimite:'2025-08-01'}],[{id:129,nombre:'Memoria viabilidad.pdf',tipo:'PDF',fecha:'2025-05-10',tamano:'2.1 MB'}]),
+  proy(44,'PROY-2025-044','Residencial Ebro Norte','Aragón Inmobiliaria S.L.','Zaragoza - Actur','En estudio','blue','SDD + AFCA','SDD','2025-06-01','2028-03-31','4.100 m²',40,'3.500.000 €','RC',0,[],[{id:135,descripcion:'Estudio viabilidad económica',estado:'Pendiente',fechaLimite:'2025-09-15'}],[{id:130,nombre:'Anteproyecto.pdf',tipo:'PDF',fecha:'2025-06-05',tamano:'3.4 MB'}]),
+];
+
+const proyectos = [
+  ...proyectosBase,
+  ...proyectosHistoricos,
+];
+
 const promotoras = [
   { id: 1, nombre: 'Promotora Iberia S.L.',         cif: 'B-28123456', contacto: 'Carlos Ruiz',    email: 'cruiz@promotora-iberia.es',    telefono: '91 234 56 78', ciudad: 'Madrid' },
   { id: 2, nombre: 'Construcciones García S.L.',    cif: 'B-28654321', contacto: 'Ana García',     email: 'agarcia@construcciones-g.es',   telefono: '91 876 54 32', ciudad: 'Madrid' },
@@ -1175,6 +1224,12 @@ app.get("/api/proyectos", authMiddleware, (req, res) => {
         resultado = resultado.filter((p) =>
             p.condicionantes.some((c) => c.estado === "Pendiente"),
         );
+    if (req.query.año) {
+        const año = parseInt(req.query.año);
+        resultado = resultado.filter((p) => new Date(p.fechaInicio).getFullYear() === año);
+    }
+    if (req.query.comercial) resultado = resultado.filter((p) => p.comercial === req.query.comercial);
+    if (req.query.promotora) resultado = resultado.filter((p) => p.promotora === req.query.promotora);
 
     res.json(
         resultado.map((p) => ({
@@ -1207,6 +1262,97 @@ app.get("/api/proyectos/:id", authMiddleware, (req, res) => {
         return res.status(403).json({ error: "Sin acceso a este proyecto" });
     }
     res.json(proyecto);
+});
+
+// ── ESTADÍSTICAS ─────────────────────────────────────────────────────────────
+
+app.get('/api/estadisticas', authMiddleware, (req, res) => {
+  const { perfil, empresa } = req.user;
+  const base = perfil === 'externo' ? proyectos.filter(p => p.promotora === empresa) : [...proyectos];
+
+  // Proyectos por estado
+  const porEstado = [
+    { estado: 'Poliza emitida',     count: base.filter(p => p.estado === 'Poliza emitida').length,     color: '#22863a' },
+    { estado: 'En trámite',         count: base.filter(p => p.estado === 'En trámite').length,          color: '#D97706' },
+    { estado: 'En estudio',         count: base.filter(p => p.estado === 'En estudio').length,          color: '#2E75B6' },
+    { estado: 'Vencimiento próximo',count: base.filter(p => p.estado === 'Vencimiento próximo').length, color: '#DC2626' },
+  ];
+
+  // Prima total
+  const parsePrima = (str) => {
+    // Formato español: "28.400 €" → 28400, "8.900,50 €" → 8900.50
+    const limpio = str.replace(/[^0-9.,]/g, '');
+    // Si tiene coma, es separador decimal; el punto es miles
+    if (limpio.includes(',')) {
+      return parseFloat(limpio.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+    // Solo punto → separador de miles en español
+    return parseFloat(limpio.replace(/\./g, '')) || 0;
+  };
+
+  const primaTotal = base.reduce((acc, p) => {
+    return acc + p.polizas.reduce((a, pol) => parsePrima(pol.prima) + a, 0);
+  }, 0);
+
+  // Proyectos y primas por año
+  const años = {};
+  base.forEach(p => {
+    const año = new Date(p.fechaInicio).getFullYear();
+    if (!años[año]) años[año] = { año, proyectos: 0, polizas: 0, prima: 0 };
+    años[año].proyectos++;
+    años[año].polizas += p.polizas.length;
+    años[año].prima += p.polizas.reduce((a, pol) => parsePrima(pol.prima) + a, 0);
+  });
+  const porAño = Object.values(años).sort((a,b) => a.año - b.año);
+
+  // Proyectos por mes (año actual)
+  const añoActual = new Date().getFullYear();
+  const meses = Array.from({length:12}, (_,i) => ({
+    mes: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][i],
+    proyectos: 0, prima: 0
+  }));
+  base.filter(p => new Date(p.fechaInicio).getFullYear() === añoActual).forEach(p => {
+    const m = new Date(p.fechaInicio).getMonth();
+    meses[m].proyectos++;
+    meses[m].prima += p.polizas.reduce((a, pol) => parsePrima(pol.prima) + a, 0);
+  });
+
+  // Proyectos por mes año anterior
+  const añoAnterior = añoActual - 1;
+  base.filter(p => new Date(p.fechaInicio).getFullYear() === añoAnterior).forEach(p => {
+    const m = new Date(p.fechaInicio).getMonth();
+    meses[m].proyectosAnt = (meses[m].proyectosAnt || 0) + 1;
+  });
+
+  // Top comerciales
+  const comercialesMap = {};
+  base.forEach(p => {
+    if (!p.comercial) return;
+    if (!comercialesMap[p.comercial]) comercialesMap[p.comercial] = { comercial: p.comercial, proyectos: 0, prima: 0 };
+    comercialesMap[p.comercial].proyectos++;
+    comercialesMap[p.comercial].prima += p.polizas.reduce((a, pol) => parsePrima(pol.prima) + a, 0);
+  });
+  const topComerciales = Object.values(comercialesMap).sort((a,b) => b.prima - a.prima);
+
+  // Por ramo
+  const ramoMap = {};
+  base.forEach(p => {
+    const r = p.ramo || p.tipo || 'Otros';
+    if (!ramoMap[r]) ramoMap[r] = { ramo: r, proyectos: 0 };
+    ramoMap[r].proyectos++;
+  });
+  const porRamo = Object.values(ramoMap).sort((a,b) => b.proyectos - a.proyectos);
+
+  // Top promotoras por prima
+  const promotorasMap = {};
+  base.forEach(p => {
+    if (!promotorasMap[p.promotora]) promotorasMap[p.promotora] = { promotora: p.promotora, proyectos: 0, prima: 0 };
+    promotorasMap[p.promotora].proyectos++;
+    promotorasMap[p.promotora].prima += p.polizas.reduce((a, pol) => parsePrima(pol.prima) + a, 0);
+  });
+  const topPromotoras = Object.values(promotorasMap).sort((a,b) => b.prima - a.prima).slice(0, 8);
+
+  res.json({ porEstado, primaTotal: Math.round(primaTotal), porAño, porMes: meses, topComerciales, topPromotoras, porRamo, totalProyectos: base.length });
 });
 
 // ── PROMOTORAS CRUD ──────────────────────────────────────────────────────────
