@@ -54,8 +54,17 @@ export default function Layout() {
                         onClick={closeSidebar}
                         className={({ isActive }) => (isActive ? "active" : "")}
                     >
-                        <span className="nav-icon">📊</span> Dashboard
+                        <span className="nav-icon">🏠</span> Inicio
                     </NavLink>
+                    {!isExterno && (
+                        <NavLink
+                            to="/dashboard"
+                            onClick={closeSidebar}
+                            className={({ isActive }) => (isActive ? "active" : "")}
+                        >
+                            <span className="nav-icon">📊</span> Dashboard
+                        </NavLink>
+                    )}
                     <NavLink
                         to="/proyectos"
                         onClick={closeSidebar}

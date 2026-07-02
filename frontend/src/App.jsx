@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login.jsx';
+import Home from './pages/Home.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Proyectos from './pages/Proyectos.jsx';
 import DetalleProyecto from './pages/DetalleProyecto.jsx';
@@ -38,7 +39,8 @@ export default function App() {
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
         <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<Home />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="proyectos" element={<Proyectos />} />
           <Route path="proyectos/:id" element={<DetalleProyecto />} />
           <Route path="promotoras" element={<Promotoras />} />
